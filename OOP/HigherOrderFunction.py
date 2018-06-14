@@ -1,5 +1,5 @@
 from types import MethodType
-import time
+from enum import Enum, unique
 
 
 class Student(object):
@@ -156,6 +156,7 @@ class Chain(object):
 
 print(Chain().status.abc.bbb)
 
+
 class Student(object):
     def __init__(self, name):
         self.name = name
@@ -163,6 +164,54 @@ class Student(object):
     def __call__(self, *args, **kwargs):
         print('My name is %s.' % self.name)
 
+
 s = Student('Michael')
 print(callable(s))
 s()
+
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+for name, member in Month.__members__.items():
+    print(name, '=>', member, ',', member.value)
+
+
+@unique
+class Weekday(Enum):
+    Sun = 0
+    Mon = 1
+    Tue = 2
+    Wed = 3
+    Thu = 4
+    Fri = 5
+    Sat = 6
+
+
+print(Weekday.Mon)
+print(Weekday['Tue'])
+print(Weekday(4))
+for name, member in Weekday.__members__.items():
+    print(name, "=>", member)
+
+
+def fn(self, name='world'):
+    print("Hello, %s" % name)
+
+
+Hello = type('Hello', (object,), dict(hello=fn))
+h = Hello()
+h.hello()
+print(type(Hello))
+print(type(h))
+
+
+
+class ListMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        attrs['add'] = lambda self, value: self.append(value)
+        return type.__new__(cls, name, bases, attrs)
+
+class MyList(list, metaclass=ListMetaclass):
+    pass
+
+myList = MyList()
+myList.add(1)
+print(myList)
